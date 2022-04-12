@@ -5,7 +5,7 @@ Created on Tue Mar 29 12:28:53 2022
 @author: Martyna
 """
 
-from math import sqrt, atan, sin, cos, degrees, radians, tan
+from math import sqrt, atan, sin, cos, degrees, radians, tan, atan2
 import numpy as np
 import statistics as st
 class Transformacje:
@@ -109,3 +109,46 @@ class Transformacje:
         y92 = round(y * m_0 + 500000, 3)   
     
         return x92, y92 
+    
+    def azym_elew(self, X0, Y0, Z0, X, Y, Z):
+        '''
+        Funkcja oblicza kąt azymutu i kąt elewacji na podstawie współrzędnych w 
+        układzie ortokartezjańskim.
+
+        Parameters
+        ----------
+        X0 : FLOAT
+            - wartosc X punktu początkowego w układzie ortokartezjańskim, liczba zmiennoprzecinkowa [m]
+        Y0 : FLOAT
+            - wartosc Y punktu początkowego w układzie ortokartezjańskim, liczba zmiennoprzecinkowa [m]
+        Z0 : FLOAT
+            - wartosc Z punktu początkowego w układzie ortokartezjańskim, liczba zmiennoprzecinkowa [m]
+        X : FLOAT
+            - wartosc X w układzie ortokartezjańskim, liczba zmiennoprzecinkowa [m]
+        Y : FLOAT
+            - wartosc Y w układzie ortokartezjańskim, liczba zmiennoprzecinkowa [m]
+        Z : FLOAT
+            - wartosc Z w układzie ortokartezjańskim, liczba zmiennoprzecinkowa [m]
+
+        Returns
+        -------
+        azymut : FLOAT
+            - wartosć kąta azymutu, liczba zmiennoprzecinkowa [stopnie]
+        elewacja : FLOAT
+            - wartosć kąta elewacji, liczba zmiennoprzecinkowa [stopnie]
+
+        '''
+ 
+        N,E,U = self.neu(X0, Y0, Z0, X, Y, Z)
+        
+        hz = np.sqrt(E**2 + N**2)
+        el = np.sqrt(E**2 + N**2 + U**2)
+        azymut = atan2(E, N)
+        if azymut < 0:
+            azymut = azymut + 2*np.pi
+        
+        elewacja = atan2(U, hz)
+        
+        azymut =  np.degrees(azymut)
+        elewacja = np.degrees(elewacja)
+        return azymut, elewacja
